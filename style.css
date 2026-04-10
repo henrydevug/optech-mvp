@@ -1,5 +1,3 @@
-
-/* NAVBAR CORE */
 <nav class="navbar">
   <div class="logo">Op-tech Ledger</div>
 
@@ -12,6 +10,22 @@
 
   <div class="menu-btn" onclick="toggleMenu()">☰</div>
 </nav>
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #0f172a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 1000;
+  border:2px solid red;
+}
+
+/* NAVBAR CORE */
 /* LOGO */
 .logo {
   color: #38bdf8;
