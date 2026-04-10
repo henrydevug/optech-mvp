@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+    <head><link rel="stylesheet" href="style.css"></head>
 <body>
 <form onsubmit="saveStock(event)">
     <input type="text" id="product" placeholder="Product">
@@ -8,7 +9,9 @@
     <button>Add Stock</button>
 </form>
 <div id="stockList"></div>
-<script>
+
+    <script src="script.js"></script>
+    <script>
 function saveStock(event){
  event.preventDefault();
  let stock = JSON.parse(localStorage.getItem('stock')) || [];
