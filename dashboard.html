@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Op-tech Dashboard</title>
+</head>
+<body>
+    <h2>Dashboard</h2>
+    <div>Today's Sales: <span id="totalSales">UGX 0</span></div>
+    <div>Today's Profit: <span id="totalProfit">UGX 0</span></div>
+    <div>Stock Items: <span id="totalStock">0 Products</span></div>
+
+    <a href="sales.html">Add Sale</a>
+    <a href="stock.html">Stock</a>
+    <a href="reports.html">Reports</a>
+
+<script>
+function loadDashboard() {
+    let sales = JSON.parse(localStorage.getItem("sales")) || [];
+    let stock = JSON.parse(localStorage.getItem("stock")) || [];
+    let today = new Date().toLocaleDateString();
+    let totalSales = 0;
+    let totalProfit = 0;
+
+    sales.forEach(sale => {
+        if (sale.date === today) {
+            totalSales += sale.sellingPrice * sale.quantity;
+            totalProfit += sale.profit;
+        }
+    });
+
+    document.getElementById("totalSales").innerText = "UGX " + totalSales;
+    document.getElementById("totalProfit").innerText = "UGX " + totalProfit;
+    document.getElementById("totalStock").innerText = stock.length + " Products";
+}
+loadDashboard();
+</script>
+</body>
+</html>

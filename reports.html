@@ -1,0 +1,12 @@
+<html><!DOCTYPE html>
+
+<body>
+<h2>Reports</h2>
+<div id="report"></div>
+<script>
+let sales = JSON.parse(localStorage.getItem('sales')) || [];
+let total = sales.reduce((sum, s) => sum + s.profit, 0);
+document.getElementById('report').innerText = 'Total Profit: UGX ' + total;
+</script>
+</body>
+</html>
