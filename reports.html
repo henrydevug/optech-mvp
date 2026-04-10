@@ -1,5 +1,5 @@
 <html><!DOCTYPE html>
-
+<head><link rel="stylesheet" href="style.css"></head>
 <body>
 <h2>Reports</h2>
 <div id="report"></div>
@@ -7,6 +7,7 @@
 let sales = JSON.parse(localStorage.getItem('sales')) || [];
 let total = sales.reduce((sum, s) => sum + s.profit, 0);
 document.getElementById('report').innerText = 'Total Profit: UGX ' + total;
+<script src="script.js"></script>  
 </script>
 </body>
 </html>
