@@ -1,33 +1,17 @@
 <!DOCTYPE html>
 <html>
-    <head><link rel="stylesheet" href="style.css"> </head>
+<head>
+  <title>Sales</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
-    <h1>Sales Page</h1>
 
-<button onclick="addSale()">Add Sale</button>
+<h1>Sales Page</h1>
 
-<div id="transaction-list"></div>
-<form onsubmit="saveSale(event)">
-    <input type="text" id="saleProduct" placeholder="Product">
-    <input type="number" id="saleQty" placeholder="Qty">
-    <input type="number" id="salePrice" placeholder="Selling Price">
-    <button>Save Sale</button><button onclick="addSale()">Add Sale</button>
-</form>
-<script>
-function saveSale(event) {
-    event.preventDefault();
-    let stock = JSON.parse(localStorage.getItem('stock')) || [];
-    let sales = JSON.parse(localStorage.getItem('sales')) || [];
-    let item = stock.find(i => i.product.toLowerCase() === saleProduct.value.toLowerCase());
-    let qty = parseInt(saleQty.value);
-    let sp = parseInt(salePrice.value);
-    let profit = (sp - item.buyingPrice) * qty;
-    item.quantity -= qty;
-    sales.push({product:item.product, quantity:qty, sellingPrice:sp, profit:profit, date:new Date().toLocaleDateString()});
-    localStorage.setItem('stock', JSON.stringify(stock));
-    localStorage.setItem('sales', JSON.stringify(sales));
-}
-    <script src="script.js"></script>
-</script>
+<button onclick="addSale()">+ Add Sale</button>
+
+<div id="sales-list"></div>
+
+<script src="script.js"></script>
 </body>
 </html>
