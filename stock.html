@@ -1,33 +1,17 @@
 <!DOCTYPE html>
 <html>
-    <head><link rel="stylesheet" href="style.css"></head>
+<head>
+  <title>Stock</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
-<form onsubmit="saveStock(event)">
-    <input type="text" id="product" placeholder="Product">
-    <input type="number" id="quantity" placeholder="Quantity">
-    <input type="number" id="buyingPrice" placeholder="Buying Price">
-    <button>Add Stock</button>
-</form>
-<div id="stockList"></div>
 
-    <script src="script.js"></script>
-    <script>
-function saveStock(event){
- event.preventDefault();
- let stock = JSON.parse(localStorage.getItem('stock')) || [];
- stock.push({
-   product: product.value,
-   quantity: parseInt(quantity.value),
-   buyingPrice: parseInt(buyingPrice.value)
- });
- localStorage.setItem('stock', JSON.stringify(stock));
- displayStock();
-}
-function displayStock(){
- let stock = JSON.parse(localStorage.getItem('stock')) || [];
- stockList.innerHTML = stock.map(item => `<p>${item.product} - ${item.quantity}</p>`).join('');
-}
-displayStock();
-</script>
+<h1>Stock Page</h1>
+
+<button onclick="addStock()">+ Add Stock</button>
+
+<div id="stock-list"></div>
+
+<script src="script.js"></script>
 </body>
 </html>
