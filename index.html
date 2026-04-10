@@ -1,30 +1,110 @@
-<h1>Welcome to Op-tech</h1>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Op-tech Ledger</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f8fafc;
+  color: #0f172a;
+}
 
-<p>
-Manage your business easily — track sales, check stock, and view reports in one simple place.
-</p>
+.page {
+  display: none;
+  padding: 20px;
+}
 
-<h2>Total Sales: <span id="total-sales">UGX 0</span></h2>
+.page.active {
+  display: block;
+}
 
-<div style="margin-top: 20px; display: grid; gap: 10px; max-width: 300px;">
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
 
-  <button onclick="location.href='sales.html'">
-    💰 Record a Sale
-  </button>
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #0f172a;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
 
-  <button onclick="location.href='stock.html'">
-    📦 Manage Stock
-  </button>
+.nav-btns {
+  display: flex;
+  gap: 10px;
+}
 
-  <button onclick="location.href='reports.html'">
-    📊 View Reports
-  </button>
+.nav-btns button {
+  flex: 1;
+}
+</style>
+</head>
+<body>
 
+<!-- PAGE 1 -->
+<div class="page active" id="home">
+  <h1>Welcome to Op-tech</h1>
+  <p>Manage your business easily.</p>
+
+  <div class="card">
+    <h2>Total Sales: UGX 0</h2>
+    <button onclick="showPage('sales')">💰 Record Sale</button>
+    <button onclick="showPage('stock')">📦 Manage Stock</button>
+    <button onclick="showPage('reports')">📊 View Reports</button>
+  </div>
 </div>
 
-<div style="margin-top: 30px; padding: 15px; background: #1e293b; border-radius: 10px;">
-  <h3>Quick Overview</h3>
-  <p>✔ Track daily sales easily</p>
-  <p>✔ Monitor your stock levels</p>
-  <p>✔ View business performance anytime</p>
+<!-- PAGE 2 -->
+<div class="page" id="sales">
+  <h2>💰 Record Sale</h2>
+  <div class="card">
+    <input type="number" placeholder="Enter amount" style="width:100%;padding:12px;">
+    <div class="nav-btns">
+      <button onclick="showPage('home')">⬅ Back</button>
+      <button onclick="showPage('stock')">Next ➜</button>
+    </div>
+  </div>
 </div>
+
+<!-- PAGE 3 -->
+<div class="page" id="stock">
+  <h2>📦 Manage Stock</h2>
+  <div class="card">
+    <input type="text" placeholder="Item name" style="width:100%;padding:12px;">
+    <div class="nav-btns">
+      <button onclick="showPage('sales')">⬅ Back</button>
+      <button onclick="showPage('reports')">Next ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page" id="reports">
+  <h2>📊 Reports</h2>
+  <div class="card">
+    <p>Sales and stock reports will appear here.</p>
+    <button onclick="showPage('stock')">⬅ Back</button>
+  </div>
+</div>
+
+<script>
+function showPage(pageId) {
+  const pages = document.querySelectorAll('.page');
+  pages.forEach(page => page.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+}
+</script>
+
+</body>
+</html>
