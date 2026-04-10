@@ -1,121 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="style.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Op-tech Ledger MVP</title>
+  <title>Op-tech Ledger</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Op-tech Ledger</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #f8fafc;
-  color: #0f172a;
-}
 
-.page {
-  display: none;
-  padding: 20px;
-}
-
-.page.active {
-  display: block;
-}
-
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-top: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  border: none;
-  border-radius: 12px;
-  background: #0f172a;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-}
-  <div class="logo">Op-tech Ledger</div>
-  <div class="nav-links">
-    <a href="#" class="active">Dashboard</a>
-    <a href="#">Transactions</a>
-    <a href="#">Reports</a>
-    <a href="#">Settings</a>
-  </div>
-  <div class="menu-btn">☰</div>
-.nav-btns {
-  display: flex;
-  gap: 10px;
-}
-.nav-btns button {
-  flex: 1;
-}
-</style>
-</head>
-  <nav class="navbar">
-</nav>
 <body>
-<!-- PAGE 1 -->
-<div class="page active" id="home">
-  <h1><marquee>Welcome to Op-tech</marquee></h1>
-  <p>Manage your business easily.</p>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="logo">Op-tech</div>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="#dashboard" class="active">Dashboard</a>
+    <a href="#transactions">Transactions</a>
+    <a href="#reports">Reports</a>
+    <a href="#settings">Settings</a>
+  </nav>
+
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+</header>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page active">
+  <h1>Dashboard</h1>
+
+  <div class="grid">
+    <div class="card">💰 Balance<br><strong>UGX 0</strong></div>
+    <div class="card">📥 Income<br><strong>UGX 0</strong></div>
+    <div class="card">📤 Expenses<br><strong>UGX 0</strong></div>
+    <div class="card">📊 Transactions<br><strong>0</strong></div>
+  </div>
+</section>
+
+<!-- TRANSACTIONS -->
+<section id="transactions" class="page">
+  <h1>Transactions</h1>
 
   <div class="card">
-    <h2>Total Sales: UGX 0</h2>
-    <button onclick="showPage('sales')">💰 Record Sale</button>
-    <button onclick="showPage('stock')">📦 Manage Stock</button>
-    <button onclick="showPage('reports')">📊 View Reports</button>
+    <p>No transactions yet.</p>
   </div>
-</div>
+</section>
 
-<!-- PAGE 2 -->
-<div class="page" id="sales">
-  <h2>💰 Record Sale</h2>
-  <div class="card">
-    <input type="number" placeholder="Enter amount" style="width:100%;padding:12px;">
-    <div class="nav-btns">
-      <button onclick="showPage('home')">⬅ Back</button>
-      <button onclick="showPage('stock')">Next ➜</button>
-    </div>
-  </div>
-</div>
+<!-- REPORTS -->
+<section id="reports" class="page">
+  <h1>Reports</h1>
 
-<!-- PAGE 3 -->
-<div class="page" id="stock">
-  <h2>📦 Manage Stock</h2>
   <div class="card">
-    <input type="text" placeholder="Item name" style="width:100%;padding:12px;">
-    <div class="nav-btns">
-      <button onclick="showPage('sales')">⬅ Back</button>
-      <button onclick="showPage('reports')">Next ➜</button>
-    </div>
+    <p>Reports will appear here.</p>
   </div>
-</div>
+</section>
 
-<!-- PAGE 4 -->
-<div class="page" id="reports">
-  <h2>📊 Reports</h2>
+<!-- SETTINGS -->
+<section id="settings" class="page">
+  <h1>Settings</h1>
+
   <div class="card">
-    <p>Sales and stock reports will appear here.</p>
-    <button onclick="showPage('stock')">⬅ Back</button>
+    <p>App settings coming soon.</p>
   </div>
-</div>
+</section>
 
 <script>
-function showPage(pageId) {
-  const pages = document.querySelectorAll('.page');
-  pages.forEach(page => page.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
+function toggleMenu() {
+  document.getElementById("navLinks").classList.toggle("show");
 }
+
+// simple page switching
+document.querySelectorAll(".nav-links a").forEach(link => {
+  link.addEventListener("click", () => {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.querySelector(link.getAttribute("href")).classList.add("active");
+
+    document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+    link.classList.add("active");
+
+    document.getElementById("navLinks").classList.remove("show");
+  });
+});
 </script>
 
 </body>
