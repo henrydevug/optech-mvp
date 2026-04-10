@@ -1,51 +1,36 @@
-/* =========================
-   OP-TECH MOBILE APP UI
-========================= */
-
-:root {
-  --primary: #38bdf8;
-  --bg: #0b1220;
-  --card: #111827;
-  --text: #e5e7eb;
-  --muted: #94a3b8;
-  --warning: #facc15;
-  --danger: #ef4444;
-  --success: #22c55e;
-}
-
-/* BASE */
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial;
+  background: #0b1220;
+  color: #e5e7eb;
   margin: 0;
-  padding: 16px;
-  background: var(--bg);
-  color: var(--text);
+  padding: 20px;
 }
 
-/* HEADINGS */
+/* HEADER */
 h1 {
+  color: #38bdf8;
   font-size: 24px;
-  color: var(--primary);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
+/* PARAGRAPHS */
 p {
-  color: var(--muted);
-  line-height: 1.4;
+  color: #94a3b8;
+  line-height: 1.5;
 }
 
-/* BUTTONS (MOBILE FIRST) */
+/* BUTTONS (APP STYLE) */
 button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 10px;
+  background: #38bdf8;
   border: none;
-  border-radius: 12px;
-  background: var(--primary);
-  color: #0b1220;
-  font-size: 16px;
-  font-weight: bold;
+  padding: 12px 14px;
+  margin: 6px 0;
+  border-radius: 10px;
   cursor: pointer;
+  width: 100%;
+  font-size: 15px;
+  font-weight: bold;
+  color: #0b1220;
 }
 
 button:hover {
@@ -54,45 +39,31 @@ button:hover {
   transition: 0.2s;
 }
 
-/* CARDS / ROWS */
+/* DATA ROWS (CARDS STYLE) */
 .row {
-  background: var(--card);
+  background: #111827;
   padding: 12px;
-  margin-top: 10px;
-  border-radius: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 6px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
   font-size: 14px;
+  align-items: center;
 }
 
-/* DESKTOP UPGRADE */
-@media (min-width: 768px) {
+/* MOBILE FRIENDLY */
+@media (max-width: 600px) {
   body {
-    padding: 30px;
+    padding: 12px;
   }
 
   .row {
-    grid-template-columns: repeat(4, 1fr);
-    align-items: center;
+    grid-template-columns: 1fr;
+    font-size: 14px;
   }
 
   button {
-    width: auto;
-    display: inline-block;
-    margin-right: 10px;
+    font-size: 16px;
   }
-}
-
-/* STATUS BADGES */
-.badge-success {
-  color: var(--success);
-}
-
-.badge-warning {
-  color: var(--warning);
-}
-
-.badge-danger {
-  color: var(--danger);
 }
