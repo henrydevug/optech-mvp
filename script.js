@@ -1,58 +1,35 @@
-// ===============================
-// OP-TECH BUSINESS SYSTEM CORE
-// ===============================
-
-// Load data or create empty system
 let sales = JSON.parse(localStorage.getItem("sales")) || [];
-let stock = JSON.parse(localStorage.getItem("stock")) || [
-  { name: "Default Item", qty: 50 }
-];
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
 
-// ===============================
+// =====================
 // 💰 ADD SALE
-// ===============================
+// =====================
 function addSale() {
-  const name = prompt("Customer name:");
-  const item = prompt("Item sold:");
-  const amount = prompt("Amount (UGX):");
+  let customer = prompt("Customer name:");
+  let item = prompt("Item sold:");
+  let amount = prompt("Amount (UGX):");
 
-  if (!name || !item || !amount) return;
+  if (!customer || !item || !amount) return;
 
-  const sale = {
+  amount = Number(amount);
+
+  sales.push({
     id: "TXN-" + Date.now(),
-    name,
+    customer,
     item,
-    amount: Number(amount),
-    date: new Date().toLocaleString()
-  };
-
-  sales.push(sale);
-  localStorage.setItem("sales", JSON.stringify(sales));
-
-  alert("Sale added successfully ✅");
-  updateDashboard();
-}
-
-// ===============================
-// 📦 UPDATE STOCK (reduce item)
-// ===============================
-function updateStock(itemName, qtySold) {
-  stock = stock.map(item => {
-    if (item.name === itemName) {
-      return { ...item, qty: item.qty - qtySold };
-    }
-    return item;
+    amount
   });
 
-  localStorage.setItem("stock", JSON.stringify(stock));
+  save();
+  render();
 }
 
-// ===============================
-// ➕ ADD STOCK ITEM
-// ===============================
-function addStockItem() {
-  const name = prompt("Item name:");
-  const qty = prompt("Quantity:");
+// =====================
+// 📦 ADD STOCK
+// =====================
+function addStock() {
+  let name = prompt("Item name:");
+  let qty = prompt("Quantity:");
 
   if (!name || !qty) return;
 
@@ -61,79 +38,80 @@ function addStockItem() {
     qty: Number(qty)
   });
 
-  localStorage.setItem("stock", JSON.stringify(stock));
-  alert("Stock added 📦");
-  updateDashboard();
+  save();
+  render();
 }
 
-// ===============================
-// 📊 CALCULATE TOTAL SALES
-// ===============================
-function getTotalSales() {
+// =====================
+// 💾 SAVE DATA
+// =====================
+function save() {
+  localStorage.setItem("sales", JSON.stringify(sales));
+  localStorage.setItem("stock", JSON.stringify(stock));
+}
+
+// =====================
+// 📊 TOTAL SALES
+// =====================
+function totalSales() {
   return sales.reduce((sum, s) => sum + s.amount, 0);
 }
 
-// ===============================
-// 🧠 DASHBOARD UPDATER
-// ===============================
-function updateDashboard() {
-  const balanceEl = document.getElementById("balance");
+// =====================
+// 🧠 RENDER ALL PAGES
+// =====================
+function render() {
 
-  if (balanceEl) {
-    balanceEl.innerText = "UGX " + getTotalSales().toLocaleString();
+  // DASHBOARD
+  let dash = document.getElementById("total-sales");
+  if (dash) {
+    dash.innerText = "UGX " + totalSales().toLocaleString();
   }
 
-  renderSales();
-  renderStock();
+  // SALES PAGE
+  let salesList = document.getElementById("sales-list");
+  if (salesList) {
+    salesList.innerHTML = "";
+
+    sales.forEach(s => {
+      let div = document.createElement("div");
+      div.className = "row";
+      div.innerHTML = `
+        <span>${s.id}</span>
+        <span>${s.customer}</span>
+        <span>${s.item}</span>
+        <span>UGX ${s.amount}</span>
+      `;
+      salesList.appendChild(div);
+    });
+  }
+
+  // STOCK PAGE
+  let stockList = document.getElementById("stock-list");
+  if (stockList) {
+    stockList.innerHTML = "";
+
+    stock.forEach(s => {
+      let div = document.createElement("div");
+      div.className = "row";
+
+      let status = s.qty <= 5 ? "⚠ LOW" : "OK";
+
+      div.innerHTML = `
+        <span>${s.name}</span>
+        <span>${s.qty}</span>
+        <span>${status}</span>
+      `;
+      stockList.appendChild(div);
+    });
+  }
+
+  // REPORTS
+  let report = document.getElementById("report-sales");
+  if (report) {
+    report.innerText = "UGX " + totalSales().toLocaleString();
+  }
 }
 
-// ===============================
-// 💰 RENDER SALES TABLE
-// ===============================
-function renderSales() {
-  const container = document.getElementById("transaction-list");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  sales.forEach(s => {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <span>${s.id}</span>
-      <span>${s.name}</span>
-      <span>UGX ${s.amount}</span>
-      <span>${s.item}</span>
-      <span>OK</span>
-    `;
-    container.appendChild(row);
-  });
-}
-
-// ===============================
-// 📦 RENDER STOCK
-// ===============================
-function renderStock() {
-  const container = document.getElementById("stock-list");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  stock.forEach(i => {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <span>${i.name}</span>
-      <span>${i.qty}</span>
-      <span>${i.qty < 10 ? "LOW ⚠️" : "OK"}</span>
-    `;
-    container.appendChild(row);
-  });
-}
-
-// ===============================
-// 🚀 INIT SYSTEM
-// ===============================
-window.onload = function () {
-  updateDashboard();
-};
+// INIT
+window.onload = render;
