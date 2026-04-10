@@ -1,33 +1,98 @@
+/* =========================
+   OP-TECH MOBILE APP UI
+========================= */
+
+:root {
+  --primary: #38bdf8;
+  --bg: #0b1220;
+  --card: #111827;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --warning: #facc15;
+  --danger: #ef4444;
+  --success: #22c55e;
+}
+
+/* BASE */
 body {
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
+  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 20px;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--text);
 }
 
+/* HEADINGS */
 h1 {
-  color: #38bdf8;
+  font-size: 24px;
+  color: var(--primary);
+  margin-bottom: 6px;
 }
 
+p {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* BUTTONS (MOBILE FIRST) */
 button {
-  background: #38bdf8;
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
   border: none;
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 8px;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #0b1220;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
 }
 
 button:hover {
   background: #0ea5e9;
+  transform: scale(1.02);
+  transition: 0.2s;
 }
 
+/* CARDS / ROWS */
 .row {
-  background: #1e293b;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 8px;
+  background: var(--card);
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 12px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr;
+  gap: 6px;
+  font-size: 14px;
+}
+
+/* DESKTOP UPGRADE */
+@media (min-width: 768px) {
+  body {
+    padding: 30px;
+  }
+
+  .row {
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+  }
+
+  button {
+    width: auto;
+    display: inline-block;
+    margin-right: 10px;
+  }
+}
+
+/* STATUS BADGES */
+.badge-success {
+  color: var(--success);
+}
+
+.badge-warning {
+  color: var(--warning);
+}
+
+.badge-danger {
+  color: var(--danger);
 }
