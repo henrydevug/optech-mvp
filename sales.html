@@ -2,6 +2,11 @@
 <html>
     <head><link rel="stylesheet" href="style.css"> </head>
 <body>
+    <h1>Sales Page</h1>
+
+<button onclick="addSale()">Add Sale</button>
+
+<div id="transaction-list"></div>
 <form onsubmit="saveSale(event)">
     <input type="text" id="saleProduct" placeholder="Product">
     <input type="number" id="saleQty" placeholder="Qty">
