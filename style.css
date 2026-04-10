@@ -1,69 +1,131 @@
+
+/* =========================
+   OP-TECH SAAS DASHBOARD UI
+========================= */
+
+:root {
+  --bg: #0a0f1c;
+  --card: #111827;
+  --card2: #0f172a;
+  --primary: #38bdf8;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --success: #22c55e;
+  --warning: #facc15;
+}
+
+/* BASE */
 body {
-  font-family: Arial;
-  background: #0b1220;
-  color: #e5e7eb;
   margin: 0;
-  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, #0f172a, #0a0f1c);
+  color: var(--text);
+  padding-bottom: 80px;
+}
+
+/* APP WRAPPER */
+.app {
+  max-width: 900px;
+  margin: auto;
+  padding: 18px;
 }
 
 /* HEADER */
 h1 {
-  color: #38bdf8;
-  font-size: 24px;
-  margin-bottom: 8px;
+  font-size: 28px;
+  margin-bottom: 6px;
+  color: var(--primary);
+  letter-spacing: 0.5px;
 }
 
-/* PARAGRAPHS */
 p {
-  color: #94a3b8;
-  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 0;
 }
 
-/* BUTTONS (APP STYLE) */
-button {
-  background: #38bdf8;
-  border: none;
-  padding: 12px 14px;
-  margin: 6px 0;
-  border-radius: 10px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 15px;
+/* DASHBOARD CARD (IMPORTANT UPGRADE) */
+.dashboard-card {
+  background: linear-gradient(135deg, #111827, #0f172a);
+  border: 1px solid #1f2937;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* BIG METRIC */
+.metric {
+  font-size: 32px;
   font-weight: bold;
-  color: #0b1220;
+  color: var(--primary);
+  margin-top: 10px;
 }
 
-button:hover {
-  background: #0ea5e9;
-  transform: scale(1.02);
+/* BUTTONS */
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #0a0f1c;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
   transition: 0.2s;
 }
 
-/* DATA ROWS (CARDS STYLE) */
+button:hover {
+  transform: translateY(-2px);
+  background: #0ea5e9;
+}
+
+/* GRID DASHBOARD */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.card {
+  background: var(--card);
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid #1f2937;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.card p {
+  margin: 8px 0 0;
+  font-size: 18px;
+  color: var(--text);
+}
+
+/* ROW LISTS */
 .row {
-  background: #111827;
+  background: var(--card);
   padding: 12px;
-  margin: 8px 0;
-  border-radius: 10px;
+  margin-top: 10px;
+  border-radius: 12px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  font-size: 14px;
-  align-items: center;
 }
 
-/* MOBILE FRIENDLY */
-@media (max-width: 600px) {
-  body {
-    padding: 12px;
+/* MOBILE */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
   }
 
   .row {
     grid-template-columns: 1fr;
-    font-size: 14px;
-  }
-
-  button {
-    font-size: 16px;
   }
 }
