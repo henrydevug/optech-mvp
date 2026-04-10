@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+    <head><link rel="stylesheet" href="style.css"> </head>
 <body>
 <form onsubmit="saveSale(event)">
     <input type="text" id="saleProduct" placeholder="Product">
@@ -21,6 +22,7 @@ function saveSale(event) {
     localStorage.setItem('stock', JSON.stringify(stock));
     localStorage.setItem('sales', JSON.stringify(sales));
 }
+    <script src="script.js"></script>
 </script>
 </body>
 </html>
