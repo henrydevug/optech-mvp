@@ -1,20 +1,17 @@
 
 /* NAVBAR CORE */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: #0f172a;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 18px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  z-index: 1000;
-  border:2px solid red;
-}
+<nav class="navbar">
+  <div class="logo">Op-tech Ledger</div>
 
+  <div class="nav-links" id="navLinks">
+    <a href="#dashboard" class="active">Dashboard</a>
+    <a href="#transactions">Transactions</a>
+    <a href="#reports">Reports</a>
+    <a href="#settings">Settings</a>
+  </div>
+
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+</nav>
 /* LOGO */
 .logo {
   color: #38bdf8;
