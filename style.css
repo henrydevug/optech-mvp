@@ -1,131 +1,139 @@
+// ===============================
+// OP-TECH BUSINESS SYSTEM CORE
+// ===============================
 
-/* =========================
-   OP-TECH SAAS DASHBOARD UI
-========================= */
+// Load data or create empty system
+let sales = JSON.parse(localStorage.getItem("sales")) || [];
+let stock = JSON.parse(localStorage.getItem("stock")) || [
+  { name: "Default Item", qty: 50 }
+];
 
-:root {
-  --bg: #0a0f1c;
-  --card: #111827;
-  --card2: #0f172a;
-  --primary: #38bdf8;
-  --text: #e5e7eb;
-  --muted: #94a3b8;
-  --success: #22c55e;
-  --warning: #facc15;
+// ===============================
+// 💰 ADD SALE
+// ===============================
+function addSale() {
+  const name = prompt("Customer name:");
+  const item = prompt("Item sold:");
+  const amount = prompt("Amount (UGX):");
+
+  if (!name || !item || !amount) return;
+
+  const sale = {
+    id: "TXN-" + Date.now(),
+    name,
+    item,
+    amount: Number(amount),
+    date: new Date().toLocaleString()
+  };
+
+  sales.push(sale);
+  localStorage.setItem("sales", JSON.stringify(sales));
+
+  alert("Sale added successfully ✅");
+  updateDashboard();
 }
 
-/* BASE */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #0f172a, #0a0f1c);
-  color: var(--text);
-  padding-bottom: 80px;
+// ===============================
+// 📦 UPDATE STOCK (reduce item)
+// ===============================
+function updateStock(itemName, qtySold) {
+  stock = stock.map(item => {
+    if (item.name === itemName) {
+      return { ...item, qty: item.qty - qtySold };
+    }
+    return item;
+  });
+
+  localStorage.setItem("stock", JSON.stringify(stock));
 }
 
-/* APP WRAPPER */
-.app {
-  max-width: 900px;
-  margin: auto;
-  padding: 18px;
+// ===============================
+// ➕ ADD STOCK ITEM
+// ===============================
+function addStockItem() {
+  const name = prompt("Item name:");
+  const qty = prompt("Quantity:");
+
+  if (!name || !qty) return;
+
+  stock.push({
+    name,
+    qty: Number(qty)
+  });
+
+  localStorage.setItem("stock", JSON.stringify(stock));
+  alert("Stock added 📦");
+  updateDashboard();
 }
 
-/* HEADER */
-h1 {
-  font-size: 28px;
-  margin-bottom: 6px;
-  color: var(--primary);
-  letter-spacing: 0.5px;
+// ===============================
+// 📊 CALCULATE TOTAL SALES
+// ===============================
+function getTotalSales() {
+  return sales.reduce((sum, s) => sum + s.amount, 0);
 }
 
-p {
-  color: var(--muted);
-  margin-top: 0;
-}
+// ===============================
+// 🧠 DASHBOARD UPDATER
+// ===============================
+function updateDashboard() {
+  const balanceEl = document.getElementById("balance");
 
-/* DASHBOARD CARD (IMPORTANT UPGRADE) */
-.dashboard-card {
-  background: linear-gradient(135deg, #111827, #0f172a);
-  border: 1px solid #1f2937;
-  border-radius: 16px;
-  padding: 20px;
-  margin-top: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-/* BIG METRIC */
-.metric {
-  font-size: 32px;
-  font-weight: bold;
-  color: var(--primary);
-  margin-top: 10px;
-}
-
-/* BUTTONS */
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 12px;
-  background: var(--primary);
-  color: #0a0f1c;
-  font-weight: bold;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  background: #0ea5e9;
-}
-
-/* GRID DASHBOARD */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 15px;
-}
-
-.card {
-  background: var(--card);
-  padding: 14px;
-  border-radius: 14px;
-  border: 1px solid #1f2937;
-}
-
-.card h3 {
-  margin: 0;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.card p {
-  margin: 8px 0 0;
-  font-size: 18px;
-  color: var(--text);
-}
-
-/* ROW LISTS */
-.row {
-  background: var(--card);
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 12px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
+  if (balanceEl) {
+    balanceEl.innerText = "UGX " + getTotalSales().toLocaleString();
   }
 
-  .row {
-    grid-template-columns: 1fr;
-  }
+  renderSales();
+  renderStock();
 }
+
+// ===============================
+// 💰 RENDER SALES TABLE
+// ===============================
+function renderSales() {
+  const container = document.getElementById("transaction-list");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  sales.forEach(s => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <span>${s.id}</span>
+      <span>${s.name}</span>
+      <span>UGX ${s.amount}</span>
+      <span>${s.item}</span>
+      <span>OK</span>
+    `;
+    container.appendChild(row);
+  });
+}
+
+// ===============================
+// 📦 RENDER STOCK
+// ===============================
+function renderStock() {
+  const container = document.getElementById("stock-list");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  stock.forEach(i => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <span>${i.name}</span>
+      <span>${i.qty}</span>
+      <span>${i.qty < 10 ? "LOW ⚠️" : "OK"}</span>
+    `;
+    container.appendChild(row);
+  });
+}
+
+// ===============================
+// 🚀 INIT SYSTEM
+// ===============================
+window.onload = function () {
+  updateDashboard();
+};
