@@ -1,43 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Sales System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Op-tech Mobile App</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f4f6f9;
+}
+
+/* 📄 PAGE SYSTEM */
+.page {
+  display: none;
+  padding: 15px;
+  padding-bottom: 80px;
+}
+
+.active {
+  display: block;
+}
+
+/* 🧾 CARDS */
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* ✍️ INPUTS */
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+/* 🔘 BUTTONS */
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.primary {
+  background: #1e88e5;
+  color: white;
+  width: 100%;
+}
+
+/* 🧭 NAV */
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: white;
+  border-top: 1px solid #ddd;
+}
+
+.nav button {
+  flex: 1;
+  background: none;
+}
+</style>
 </head>
 
 <body>
 
-<!-- Your UI elements must exist -->
-<input id="saleQty" placeholder="Quantity">
-<input id="salePrice" placeholder="Price">
-<button onclick="addSale()">Sell</button>
+<!-- 📊 PAGE 1: DASHBOARD -->
+<div class="page active" id="page1">
+  <h2>Dashboard</h2>
 
-<div id="todaySales"></div>
-<div id="todayProfit"></div>
+  <div class="card">
+    <div id="todaySales">Sales: 0</div>
+    <div id="todayProfit">Profit: 0</div>
+  </div>
+</div>
 
-<div id="receiptBox"></div>
+<!-- 💰 PAGE 2: SALE -->
+<div class="page" id="page2">
+  <h2>New Sale</h2>
 
+  <div class="card">
+    <input id="productName" placeholder="Product name">
+    <input id="saleQty" type="number" placeholder="Quantity">
+    <input id="salePrice" type="number" placeholder="Selling price">
+    <button class="primary" onclick="addSale()">Sell Item</button>
+  </div>
+</div>
+
+<!-- 🧾 PAGE 3: RECEIPT -->
+<div class="page" id="page3">
+  <h2>Receipt</h2>
+
+  <div class="card">
+    <div id="receiptBox"></div>
+  </div>
+</div>
+
+<!-- 🧠 SCRIPT -->
 <script>
-let sales = JSON.parse(localStorage.getItem("sales")) || [];
-let stock = JSON.parse(localStorage.getItem("stock")) || [];
+let currentPage = 1;
 
-// =====================
-// 💰 ADD SALE (FIXED)
-// =====================
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+let sales = JSON.parse(localStorage.getItem("sales")) || [];
+
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page" + page).classList.add("active");
+  currentPage = page;
+}
+
+/* 🔜 NEXT */
+function nextPage() {
+  if (currentPage < 3) showPage(currentPage + 1);
+}
+
+/* 🔙 BACK */
+function prevPage() {
+  if (currentPage > 1) showPage(currentPage - 1);
+}
+
 function addSale() {
-  let productName = prompt("Product name:");
+  let productName = document.getElementById("productName").value.trim();
   let qty = Number(document.getElementById("saleQty").value);
   let price = Number(document.getElementById("salePrice").value);
 
-  if (!productName || isNaN(qty) || isNaN(price)) {
-    alert("Enter valid product, quantity and price");
+  if (!productName || !qty || !price) {
+    alert("Fill all fields");
     return;
   }
 
   let item = stock.find(i => i.name === productName);
 
   if (!item) {
-    alert("Item not found in stock");
+    alert("Item not found");
     return;
   }
 
@@ -46,18 +152,18 @@ function addSale() {
     return;
   }
 
-  const total = qty * price;
-  const profit = (price - item.buyingPrice) * qty;
+  let total = qty * price;
+  let profit = (price - item.buyingPrice) * qty;
 
   item.quantity -= qty;
 
-  const receipt = {
+  let receipt = {
     product: productName,
     quantity: qty,
     sellingPrice: price,
     total,
     profit,
-    date: new Date().toISOString().split("T")[0] // stable date
+    date: new Date().toLocaleDateString()
   };
 
   sales.push(receipt);
@@ -69,58 +175,54 @@ function addSale() {
   document.getElementById("saleQty").value = "";
   document.getElementById("salePrice").value = "";
 
-  loadProducts();
   loadTotals();
   loadReceipt();
+
+  showPage(3); // 👉 auto go to receipt page
 }
 
-// =====================
-// 📊 TOTALS (FIXED)
-// =====================
 function loadTotals() {
-  const sales = JSON.parse(localStorage.getItem("sales")) || [];
-  const today = new Date().toISOString().split("T")[0];
+  let sales = JSON.parse(localStorage.getItem("sales")) || [];
+  let today = new Date().toLocaleDateString();
 
   let totalSales = 0;
   let totalProfit = 0;
 
   sales.forEach(s => {
     if (s.date === today) {
-      totalSales += Number(s.total);
-      totalProfit += Number(s.profit);
+      totalSales += s.total;
+      totalProfit += s.profit;
     }
   });
 
-  document.getElementById("todaySales").innerText = "Sales: UGX " + totalSales;
-  document.getElementById("todayProfit").innerText = "Profit: UGX " + totalProfit;
+  document.getElementById("todaySales").innerText = "Sales: " + totalSales;
+  document.getElementById("todayProfit").innerText = "Profit: " + totalProfit;
 }
 
-// =====================
-// 🧾 RECEIPT (FIXED)
-// =====================
 function loadReceipt() {
-  const receipt = JSON.parse(localStorage.getItem("lastReceipt"));
+  let receipt = JSON.parse(localStorage.getItem("lastReceipt"));
   if (!receipt) return;
 
   document.getElementById("receiptBox").innerHTML = `
-    <div class="receipt">
-      <p><strong>Product:</strong> ${receipt.product}</p>
-      <p><strong>Qty:</strong> ${receipt.quantity}</p>
-      <p><strong>Price:</strong> UGX ${receipt.sellingPrice}</p>
-      <p><strong>Total:</strong> UGX ${receipt.total}</p>
-      <p><strong>Profit:</strong> UGX ${receipt.profit}</p>
-      <p><strong>Date:</strong> ${receipt.date}</p>
-    </div>
+    <b>${receipt.product}</b><br>
+    Qty: ${receipt.quantity}<br>
+    Price: UGX ${receipt.sellingPrice}<br>
+    Total: UGX ${receipt.total}<br>
+    Profit: UGX ${receipt.profit}<br>
+    Date: ${receipt.date}
   `;
 }
-
-// Placeholder (you already have these in other files)
-function loadProducts() {}
-function loadStock() {}
 
 loadTotals();
 loadReceipt();
 </script>
+
+<!-- 🧭 NAVIGATION BUTTONS -->
+<div class="nav">
+  <button onclick="prevPage()">⬅ Back</button>
+  <button onclick="showPage(1)">🏠 Home</button>
+  <button onclick="nextPage()">Next ➡</button>
+</div>
 
 </body>
 </html>
