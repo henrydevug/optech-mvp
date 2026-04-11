@@ -1,25 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sales System</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .receipt { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+  </style>
+</head>
+
+<body>
+
+  <h2>Sales Dashboard</h2>
+
+  <input id="saleQty" placeholder="Quantity" type="number">
+  <input id="salePrice" placeholder="Selling Price" type="number">
+  <button onclick="addSale()">Add Sale</button>
+
+  <h3 id="todaySales">Sales: UGX 0</h3>
+  <h3 id="todayProfit">Profit: UGX 0</h3>
+
+  <div id="receiptBox"></div>
+
 <script>
-let stock = JSON.parse(localStorage.getItem("stock")) || [];
 let sales = JSON.parse(localStorage.getItem("sales")) || [];
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
 
 // =====================
-// 💰 RECORD SALE
+// 💰 ADD SALE
 // =====================
-function addSale(productName, qty, price) {
-  qty = Number(qty);
-  price = Number(price);
+function addSale() {
+  const qty = Number(document.getElementById("saleQty").value);
+  const price = Number(document.getElementById("salePrice").value);
 
-  let item = stock.find(p => p.name === productName);
+  if (!qty || !price) return alert("Enter quantity and price");
 
-  if (!item) {
-    alert("Product not found in stock!");
-    return;
-  }
+  // assume last product for simplicity (you can improve later)
+  const item = stock[stock.length - 1];
+  if (!item) return alert("No stock found");
 
-  if (item.quantity < qty) {
-    alert("Not enough stock!");
-    return;
-  }
+  const productName = item.name;
 
   const total = qty * price;
   const profit = (price - item.buyingPrice) * qty;
@@ -44,13 +64,12 @@ function addSale(productName, qty, price) {
   document.getElementById("saleQty").value = "";
   document.getElementById("salePrice").value = "";
 
-  loadProducts();
   loadTotals();
   loadReceipt();
 }
 
 // =====================
-// 📊 TODAY TOTALS
+// 📊 TOTALS
 // =====================
 function loadTotals() {
   const sales = JSON.parse(localStorage.getItem("sales")) || [];
@@ -74,7 +93,7 @@ function loadTotals() {
 }
 
 // =====================
-// 🧾 LAST RECEIPT
+// 🧾 RECEIPT
 // =====================
 function loadReceipt() {
   const receipt = JSON.parse(localStorage.getItem("lastReceipt"));
@@ -92,10 +111,9 @@ function loadReceipt() {
   `;
 }
 
-// =====================
-// 🚀 INIT
-// =====================
-loadProducts();
 loadTotals();
 loadReceipt();
 </script>
+
+</body>
+</html>
