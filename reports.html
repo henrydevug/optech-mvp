@@ -1,15 +1,55 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Reports</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
 
-<h1>Reports</h1>
+      const total = qty * price;
+      const profit = (price - item.buyingPrice) * qty;
+      item.quantity -= qty;
 
-<h2>Total Sales: <span id="report-sales">UGX 0</span></h2>
+      const receipt = { product: productName, quantity: qty, sellingPrice: price, total, profit, date: new Date().toLocaleDateString() };
+      sales.push(receipt);
 
-<script src="script.js"></script>
+      localStorage.setItem("stock", JSON.stringify(stock));
+      localStorage.setItem("sales", JSON.stringify(sales));
+      localStorage.setItem("lastReceipt", JSON.stringify(receipt));
+
+      document.getElementById("saleQty").value = "";
+      document.getElementById("salePrice").value = "";
+
+      loadProducts();
+      loadTotals();
+      loadReceipt();
+    }
+
+    function loadTotals() {
+      const sales = JSON.parse(localStorage.getItem("sales")) || [];
+      const today = new Date().toLocaleDateString();
+      let totalSales = 0, totalProfit = 0;
+      sales.forEach(s => {
+        if (s.date === today) {
+          totalSales += s.total;
+          totalProfit += s.profit;
+        }
+      });
+      document.getElementById("todaySales").innerText = `Sales: UGX ${totalSales}`;
+      document.getElementById("todayProfit").innerText = `Profit: UGX ${totalProfit}`;
+    }
+
+    function loadReceipt() {
+      const receipt = JSON.parse(localStorage.getItem("lastReceipt"));
+      if (!receipt) return;
+      document.getElementById("receiptBox").innerHTML = `
+        <div class="receipt">
+          <p><strong>Product:</strong> ${receipt.product}</p>
+          <p><strong>Qty:</strong> ${receipt.quantity}</p>
+          <p><strong>Price:</strong> UGX ${receipt.sellingPrice}</p>
+          <p><strong>Total:</strong> UGX ${receipt.total}</p>
+          <p><strong>Profit:</strong> UGX ${receipt.profit}</p>
+          <p><strong>Date:</strong> ${receipt.date}</p>
+        </div>`;
+    }
+
+    loadProducts();
+    loadTotals();
+    loadReceipt();
+  </script>
 </body>
 </html>
