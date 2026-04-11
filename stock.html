@@ -1,17 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Stock</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock | Op-tech</title>
+  <style>
+    body { font-family: Arial; margin: 0; background: #f4f4f4; }
+    nav { background: #1e8e3e; padding: 15px; display: flex; justify-content: space-around; flex-wrap: wrap; }
+    nav a { color: white; text-decoration: none; font-weight: bold; }
+    .container { padding: 20px; }
+    .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+    input, button { width: 100%; padding: 10px; margin-top: 10px; }
+  </style>
 </head>
 <body>
+  <nav>
+    <a href="index.html">Dashboard</a>
+    <a href="sales.html">Sales</a>
+    <a href="stock.html">Stock</a>
+    <a href="reports.html">Reports</a>
+  </nav>
 
-<h1>Stock Page</h1>
+  <div class="container">
+    <div class="card">
+      <h2>📦 Add Stock</h2>
+      <input type="text" id="product" placeholder="Product Name" />
+      <input type="number" id="quantity" placeholder="Quantity" />
+      <input type="number" id="buyingPrice" placeholder="Buying Price" />
+      <button onclick="saveStock()">Save Stock</button>
+    </div>
+    <div class="card">
+      <h3>Current Stock</h3>
+      <div id="stockList"></div>
+    </div>
+  </div>
 
-<button onclick="addStock()">+ Add Stock</button>
+  <script>
+    function saveStock() {
+      const stock = JSON.parse(localStorage.getItem("stock")) || [];
+      const product = document.getElementById("product").value.trim();
+      const quantity = parseInt(document.getElementById("quantity").value);
+      const buyingPrice = parseInt(document.getElementById("buyingPrice").value);
 
-<div id="stock-list"></div>
+      if (!product || !quantity || !buyingPrice) return alert("Fill all fields");
 
-<script src="script.js"></script>
+      stock.push({ product, quantity, buyingPrice });
+      localStorage.setItem("stock", JSON.stringify(stock));
+
+      document.getElementById("product").value = "";
+      document.getElementById("quantity").value = "";
+      document.getElementById("buyingPrice").value = "";
+      loadStock();
+    }
+
+    function loadStock() {
+      const stock = JSON.parse(localStorage.getItem("stock")) || [];
+      document.getElementById("stockList").innerHTML = stock.length
+        ? stock.map(item => `<p>${item.product} - ${item.quantity} units - UGX ${item.buyingPrice}</p>`).join("")
+        : "<p>No stock yet</p>";
+    }
+    loadStock();
+  </script>
 </body>
 </html>
