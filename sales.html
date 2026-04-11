@@ -2,52 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sales System</title>
+  <title>Op-tech Sales</title>
+
   <style>
-    body { font-family: Arial; padding: 20px; }
-    .receipt { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 
 <body>
 
-  <h2>Sales Dashboard</h2>
+<!-- NAVIGATION -->
+<div class="nav">
+  <button onclick="goBack()">⬅ Back</button>
+  <button onclick="loadTotals()">🔄 Refresh</button>
+</div>
 
-  <input id="saleQty" placeholder="Quantity" type="number">
-  <input id="salePrice" placeholder="Selling Price" type="number">
-  <button onclick="addSale()">Add Sale</button>
+<!-- SALES INPUT -->
+<div class="card">
+  <h2>Make Sale</h2>
 
+  <input id="itemName" placeholder="Item Name" type="text"><br><br>
+  <input id="saleQty" placeholder="Quantity" type="number"><br><br>
+  <input id="salePrice" placeholder="Selling Price" type="number"><br>
+
+  <button onclick="addSale()">💰 Add Sale</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="card">
   <h3 id="todaySales">Sales: UGX 0</h3>
   <h3 id="todayProfit">Profit: UGX 0</h3>
+</div>
 
-  <div id="receiptBox"></div>
+<!-- RECEIPT -->
+<div id="receiptBox" class="card"></div>
 
 <script>
 let sales = JSON.parse(localStorage.getItem("sales")) || [];
-let stock = JSON.parse(localStorage.getItem("stock")) || [];
 
 // =====================
 // 💰 ADD SALE
 // =====================
 function addSale() {
+  const itemName = document.getElementById("itemName").value.trim();
   const qty = Number(document.getElementById("saleQty").value);
   const price = Number(document.getElementById("salePrice").value);
 
-  if (!qty || !price) return alert("Enter quantity and price");
-
-  // assume last product for simplicity (you can improve later)
-  const item = stock[stock.length - 1];
-  if (!item) return alert("No stock found");
-
-  const productName = item.name;
+  if (!itemName || !qty || !price) {
+    return alert("Fill all fields");
+  }
 
   const total = qty * price;
-  const profit = (price - item.buyingPrice) * qty;
 
-  item.quantity -= qty;
+  // simple profit estimate (you can upgrade later with buying price)
+  const profit = total * 0.2;
 
   const receipt = {
-    product: productName,
+    product: itemName,
     quantity: qty,
     sellingPrice: price,
     total,
@@ -57,10 +91,10 @@ function addSale() {
 
   sales.push(receipt);
 
-  localStorage.setItem("stock", JSON.stringify(stock));
   localStorage.setItem("sales", JSON.stringify(sales));
   localStorage.setItem("lastReceipt", JSON.stringify(receipt));
 
+  document.getElementById("itemName").value = "";
   document.getElementById("saleQty").value = "";
   document.getElementById("salePrice").value = "";
 
@@ -100,17 +134,24 @@ function loadReceipt() {
   if (!receipt) return;
 
   document.getElementById("receiptBox").innerHTML = `
-    <div class="receipt">
-      <p><strong>Product:</strong> ${receipt.product}</p>
-      <p><strong>Qty:</strong> ${receipt.quantity}</p>
-      <p><strong>Price:</strong> UGX ${receipt.sellingPrice}</p>
-      <p><strong>Total:</strong> UGX ${receipt.total}</p>
-      <p><strong>Profit:</strong> UGX ${receipt.profit}</p>
-      <p><strong>Date:</strong> ${receipt.date}</p>
-    </div>
+    <h3>Last Receipt</h3>
+    <p><b>Item:</b> ${receipt.product}</p>
+    <p><b>Qty:</b> ${receipt.quantity}</p>
+    <p><b>Price:</b> UGX ${receipt.sellingPrice}</p>
+    <p><b>Total:</b> UGX ${receipt.total}</p>
+    <p><b>Profit:</b> UGX ${receipt.profit}</p>
+    <p><b>Date:</b> ${receipt.date}</p>
   `;
 }
 
+// =====================
+// ⬅ BACK BUTTON
+// =====================
+function goBack() {
+  window.history.back();
+}
+
+// INIT
 loadTotals();
 loadReceipt();
 </script>
