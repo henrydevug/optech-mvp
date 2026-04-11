@@ -17,7 +17,8 @@ function addSale() {
     id: "TXN-" + Date.now(),
     customer,
     item,
-    amount
+    amount,
+    date: new Date().toISOString().split("T")[0]
   });
 
   save();
@@ -58,14 +59,51 @@ function totalSales() {
 }
 
 // =====================
+// 📅 TODAY SALES
+// =====================
+function todaySales() {
+  const today = new Date().toISOString().split("T")[0];
+
+  return sales
+    .filter(s => s.date === today)
+    .reduce((sum, s) => sum + s.amount, 0);
+}
+
+// =====================
+// 📈 TODAY PROFIT
+// MVP margin estimate 30%
+// =====================
+function todayProfit() {
+  return todaySales() * 0.3;
+}
+
+// =====================
+// ⚠ LOW STOCK ALERTS
+// =====================
+function lowStockCount() {
+  return stock.filter(s => s.qty <= 5).length;
+}
+
+// =====================
 // 🧠 RENDER ALL PAGES
 // =====================
 function render() {
 
   // DASHBOARD
-  let dash = document.getElementById("total-sales");
-  if (dash) {
-    dash.innerText = "UGX " + totalSales().toLocaleString();
+  let salesCard = document.getElementById("today-sales");
+  let profitCard = document.getElementById("today-profit");
+  let lowStockCard = document.getElementById("low-stock-alerts");
+
+  if (salesCard) {
+    salesCard.innerText = "UGX " + todaySales().toLocaleString();
+  }
+
+  if (profitCard) {
+    profitCard.innerText = "UGX " + todayProfit().toLocaleString();
+  }
+
+  if (lowStockCard) {
+    lowStockCard.innerText = lowStockCount() + " Items";
   }
 
   // SALES PAGE
@@ -80,7 +118,7 @@ function render() {
         <span>${s.id}</span>
         <span>${s.customer}</span>
         <span>${s.item}</span>
-        <span>UGX ${s.amount}</span>
+        <span>UGX ${s.amount.toLocaleString()}</span>
       `;
       salesList.appendChild(div);
     });
