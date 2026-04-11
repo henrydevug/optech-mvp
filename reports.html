@@ -1,55 +1,126 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sales System</title>
+</head>
 
-      const total = qty * price;
-      const profit = (price - item.buyingPrice) * qty;
-      item.quantity -= qty;
+<body>
 
-      const receipt = { product: productName, quantity: qty, sellingPrice: price, total, profit, date: new Date().toLocaleDateString() };
-      sales.push(receipt);
+<!-- Your UI elements must exist -->
+<input id="saleQty" placeholder="Quantity">
+<input id="salePrice" placeholder="Price">
+<button onclick="addSale()">Sell</button>
 
-      localStorage.setItem("stock", JSON.stringify(stock));
-      localStorage.setItem("sales", JSON.stringify(sales));
-      localStorage.setItem("lastReceipt", JSON.stringify(receipt));
+<div id="todaySales"></div>
+<div id="todayProfit"></div>
 
-      document.getElementById("saleQty").value = "";
-      document.getElementById("salePrice").value = "";
+<div id="receiptBox"></div>
 
-      loadProducts();
-      loadTotals();
-      loadReceipt();
+<script>
+let sales = JSON.parse(localStorage.getItem("sales")) || [];
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+
+// =====================
+// 💰 ADD SALE (FIXED)
+// =====================
+function addSale() {
+  let productName = prompt("Product name:");
+  let qty = Number(document.getElementById("saleQty").value);
+  let price = Number(document.getElementById("salePrice").value);
+
+  if (!productName || isNaN(qty) || isNaN(price)) {
+    alert("Enter valid product, quantity and price");
+    return;
+  }
+
+  let item = stock.find(i => i.name === productName);
+
+  if (!item) {
+    alert("Item not found in stock");
+    return;
+  }
+
+  if (item.quantity < qty) {
+    alert("Not enough stock");
+    return;
+  }
+
+  const total = qty * price;
+  const profit = (price - item.buyingPrice) * qty;
+
+  item.quantity -= qty;
+
+  const receipt = {
+    product: productName,
+    quantity: qty,
+    sellingPrice: price,
+    total,
+    profit,
+    date: new Date().toISOString().split("T")[0] // stable date
+  };
+
+  sales.push(receipt);
+
+  localStorage.setItem("stock", JSON.stringify(stock));
+  localStorage.setItem("sales", JSON.stringify(sales));
+  localStorage.setItem("lastReceipt", JSON.stringify(receipt));
+
+  document.getElementById("saleQty").value = "";
+  document.getElementById("salePrice").value = "";
+
+  loadProducts();
+  loadTotals();
+  loadReceipt();
+}
+
+// =====================
+// 📊 TOTALS (FIXED)
+// =====================
+function loadTotals() {
+  const sales = JSON.parse(localStorage.getItem("sales")) || [];
+  const today = new Date().toISOString().split("T")[0];
+
+  let totalSales = 0;
+  let totalProfit = 0;
+
+  sales.forEach(s => {
+    if (s.date === today) {
+      totalSales += Number(s.total);
+      totalProfit += Number(s.profit);
     }
+  });
 
-    function loadTotals() {
-      const sales = JSON.parse(localStorage.getItem("sales")) || [];
-      const today = new Date().toLocaleDateString();
-      let totalSales = 0, totalProfit = 0;
-      sales.forEach(s => {
-        if (s.date === today) {
-          totalSales += s.total;
-          totalProfit += s.profit;
-        }
-      });
-      document.getElementById("todaySales").innerText = `Sales: UGX ${totalSales}`;
-      document.getElementById("todayProfit").innerText = `Profit: UGX ${totalProfit}`;
-    }
+  document.getElementById("todaySales").innerText = "Sales: UGX " + totalSales;
+  document.getElementById("todayProfit").innerText = "Profit: UGX " + totalProfit;
+}
 
-    function loadReceipt() {
-      const receipt = JSON.parse(localStorage.getItem("lastReceipt"));
-      if (!receipt) return;
-      document.getElementById("receiptBox").innerHTML = `
-        <div class="receipt">
-          <p><strong>Product:</strong> ${receipt.product}</p>
-          <p><strong>Qty:</strong> ${receipt.quantity}</p>
-          <p><strong>Price:</strong> UGX ${receipt.sellingPrice}</p>
-          <p><strong>Total:</strong> UGX ${receipt.total}</p>
-          <p><strong>Profit:</strong> UGX ${receipt.profit}</p>
-          <p><strong>Date:</strong> ${receipt.date}</p>
-        </div>`;
-    }
+// =====================
+// 🧾 RECEIPT (FIXED)
+// =====================
+function loadReceipt() {
+  const receipt = JSON.parse(localStorage.getItem("lastReceipt"));
+  if (!receipt) return;
 
-    loadProducts();
-    loadTotals();
-    loadReceipt();
-  </script>
+  document.getElementById("receiptBox").innerHTML = `
+    <div class="receipt">
+      <p><strong>Product:</strong> ${receipt.product}</p>
+      <p><strong>Qty:</strong> ${receipt.quantity}</p>
+      <p><strong>Price:</strong> UGX ${receipt.sellingPrice}</p>
+      <p><strong>Total:</strong> UGX ${receipt.total}</p>
+      <p><strong>Profit:</strong> UGX ${receipt.profit}</p>
+      <p><strong>Date:</strong> ${receipt.date}</p>
+    </div>
+  `;
+}
+
+// Placeholder (you already have these in other files)
+function loadProducts() {}
+function loadStock() {}
+
+loadTotals();
+loadReceipt();
+</script>
+
 </body>
 </html>
