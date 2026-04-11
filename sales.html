@@ -1,55 +1,101 @@
-<!DOCTYPE html>
-<html>
-      const total = qty * price;
-      const profit = (price - item.buyingPrice) * qty;
-      item.quantity -= qty;
+<script>
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+let sales = JSON.parse(localStorage.getItem("sales")) || [];
 
-      const receipt = { product: productName, quantity: qty, sellingPrice: price, total, profit, date: new Date().toLocaleDateString() };
-      sales.push(receipt);
+// =====================
+// 💰 RECORD SALE
+// =====================
+function addSale(productName, qty, price) {
+  qty = Number(qty);
+  price = Number(price);
 
-      localStorage.setItem("stock", JSON.stringify(stock));
-      localStorage.setItem("sales", JSON.stringify(sales));
-      localStorage.setItem("lastReceipt", JSON.stringify(receipt));
+  let item = stock.find(p => p.name === productName);
 
-      document.getElementById("saleQty").value = "";
-      document.getElementById("salePrice").value = "";
+  if (!item) {
+    alert("Product not found in stock!");
+    return;
+  }
 
-      loadProducts();
-      loadTotals();
-      loadReceipt();
+  if (item.quantity < qty) {
+    alert("Not enough stock!");
+    return;
+  }
+
+  const total = qty * price;
+  const profit = (price - item.buyingPrice) * qty;
+
+  item.quantity -= qty;
+
+  const receipt = {
+    product: productName,
+    quantity: qty,
+    sellingPrice: price,
+    total,
+    profit,
+    date: new Date().toLocaleDateString()
+  };
+
+  sales.push(receipt);
+
+  localStorage.setItem("stock", JSON.stringify(stock));
+  localStorage.setItem("sales", JSON.stringify(sales));
+  localStorage.setItem("lastReceipt", JSON.stringify(receipt));
+
+  document.getElementById("saleQty").value = "";
+  document.getElementById("salePrice").value = "";
+
+  loadProducts();
+  loadTotals();
+  loadReceipt();
+}
+
+// =====================
+// 📊 TODAY TOTALS
+// =====================
+function loadTotals() {
+  const sales = JSON.parse(localStorage.getItem("sales")) || [];
+  const today = new Date().toLocaleDateString();
+
+  let totalSales = 0;
+  let totalProfit = 0;
+
+  sales.forEach(s => {
+    if (s.date === today) {
+      totalSales += s.total;
+      totalProfit += s.profit;
     }
+  });
 
-    function loadTotals() {
-      const sales = JSON.parse(localStorage.getItem("sales")) || [];
-      const today = new Date().toLocaleDateString();
-      let totalSales = 0, totalProfit = 0;
-      sales.forEach(s => {
-        if (s.date === today) {
-          totalSales += s.total;
-          totalProfit += s.profit;
-        }
-      });
-      document.getElementById("todaySales").innerText = `Sales: UGX ${totalSales}`;
-      document.getElementById("todayProfit").innerText = `Profit: UGX ${totalProfit}`;
-    }
+  document.getElementById("todaySales").innerText =
+    `Sales: UGX ${totalSales}`;
 
-    function loadReceipt() {
-      const receipt = JSON.parse(localStorage.getItem("lastReceipt"));
-      if (!receipt) return;
-      document.getElementById("receiptBox").innerHTML = `
-        <div class="receipt">
-          <p><strong>Product:</strong> ${receipt.product}</p>
-          <p><strong>Qty:</strong> ${receipt.quantity}</p>
-          <p><strong>Price:</strong> UGX ${receipt.sellingPrice}</p>
-          <p><strong>Total:</strong> UGX ${receipt.total}</p>
-          <p><strong>Profit:</strong> UGX ${receipt.profit}</p>
-          <p><strong>Date:</strong> ${receipt.date}</p>
-        </div>`;
-    }
+  document.getElementById("todayProfit").innerText =
+    `Profit: UGX ${totalProfit}`;
+}
 
-    loadProducts();
-    loadTotals();
-    loadReceipt();
-  </script>
-</body>
-</html>
+// =====================
+// 🧾 LAST RECEIPT
+// =====================
+function loadReceipt() {
+  const receipt = JSON.parse(localStorage.getItem("lastReceipt"));
+  if (!receipt) return;
+
+  document.getElementById("receiptBox").innerHTML = `
+    <div class="receipt">
+      <p><strong>Product:</strong> ${receipt.product}</p>
+      <p><strong>Qty:</strong> ${receipt.quantity}</p>
+      <p><strong>Price:</strong> UGX ${receipt.sellingPrice}</p>
+      <p><strong>Total:</strong> UGX ${receipt.total}</p>
+      <p><strong>Profit:</strong> UGX ${receipt.profit}</p>
+      <p><strong>Date:</strong> ${receipt.date}</p>
+    </div>
+  `;
+}
+
+// =====================
+// 🚀 INIT
+// =====================
+loadProducts();
+loadTotals();
+loadReceipt();
+</script>
