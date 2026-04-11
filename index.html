@@ -1,78 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Op-tech System</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Op-tech Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
+    nav {
+      background: #1e8e3e;
+      padding: 15px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+    nav a { color: white; text-decoration: none; font-weight: bold; }
+    .container { padding: 20px; }
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
-
 <body>
-
-<header class="topbar">
-  <h2>OP-TECH</h2>
   <nav>
-    <button onclick="showPage('dashboard')">Dashboard</button>
-    <button onclick="showPage('ledger')">Ledger</button>
-    <button onclick="showPage('inventory')">Inventory</button>
+    <a href="index.html">Dashboard</a>
+    <a href="sales.html">Sales</a>
+    <a href="stock.html">Stock</a>
+    <a href="reports.html">Reports</a>
   </nav>
-</header>
 
-<main>
-
-<!-- DASHBOARD -->
-<section id="dashboard" class="page active">
-  <h1>Dashboard</h1>
-
-  <div class="grid">
+  <div class="container">
+    <div class="card"><h3>Today's Sales</h3><p id="totalSales">UGX 0</p></div>
+    <div class="card"><h3>Today's Profit</h3><p id="totalProfit">UGX 0</p></div>
+    <div class="card"><h3>Stock Items</h3><p id="totalStock">0 Products</p></div>
     <div class="card">
-      <h3>Today Sales</h3>
-      <p id="todaySales">UGX 0</p>
-    </div>
-
-    <div class="card">
-      <h3>Profit</h3>
-      <p id="profit">UGX 0</p>
-    </div>
-
-    <div class="card">
-      <h3>Low Stock</h3>
-      <p id="lowStock">0</p>
+      <h3>⚠️ Low Stock Alerts</h3>
+      <p id="lowStock">0 Alerts</p>
+      <div id="lowStockList"></div>
     </div>
   </div>
-</section>
 
-<!-- LEDGER -->
-<section id="ledger" class="page">
-  <h1>Ledger</h1>
+  <script>
+    function loadDashboard() {
+      const sales = JSON.parse(localStorage.getItem("sales")) || [];
+      const stock = JSON.parse(localStorage.getItem("stock")) || [];
+      const today = new Date().toLocaleDateString();
 
-  <input id="customer" placeholder="Customer">
-  <input id="item" placeholder="Item">
-  <input id="amount" type="number" placeholder="Amount">
+      let totalSales = 0;
+      let totalProfit = 0;
+      let lowStockItems = [];
 
-  <button onclick="addSale()">Add Sale</button>
-
-  <div id="salesList"></div>
-</section>
-
-<!-- INVENTORY -->
-<section id="inventory" class="page">
-  <h1>Inventory</h1>
-
-  <input id="stockItem" placeholder="Item">
-  <input id="stockQty" type="number" placeholder="Quantity">
-
-  <button onclick="addStock()">Add Stock</button>
-
-  <div id="stockList"></div>
-</section>
-
-</main>
-
-<footer>
-  © 2026 Op-tech | Mobile Fintech MVP
-</footer>
-
-<script src="script.js"></script>
-</body>
-</html>
+      sales.forEach(sale => {
+        if (sale.date === today) {
+          totalSales += sale.total;
+          totalProfit += sale.profit;
+        }
