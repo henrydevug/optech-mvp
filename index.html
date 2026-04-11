@@ -54,21 +54,23 @@
   </div>
 </section>
 <!-- TRANSACTIONS -->
-<section id="transactions" class="page">
-  <h1>Transactions</h1>
+  <div class="dashboard-cards">
+  <div class="card stat-card">
+    <h3>Today's Sales</h3>
+    <p id="todaySales">UGX 0</p>
+  </div>
 
-  <div class="card">
-    <input type="date" id="date" style="width:100%;padding:10px;margin-bottom:10px;">
-    
-    <input type="text" id="desc" placeholder="Description"
-      style="width:100%;padding:10px;margin-bottom:10px;">
+  <div class="card stat-card">
+    <h3>Today's Profit</h3>
+    <p id="todayProfit">UGX 0</p>
+  </div>
 
-    <select id="type" style="width:100%;padding:10px;margin-bottom:10px;">
-      <option value="Income">Income</option>
-      <option value="Expense">Expense</option>
-    </select>
-
-    <input type="number" id="amount" placeholder="Amount"
+  <div class="card stat-card">
+    <h3>Low Stock Alerts</h3>
+    <p id="lowStock">0 Items</p>
+  </div>
+</div>
+   <input type="number" id="amount" placeholder="Amount"
       style="width:100%;padding:10px;margin-bottom:10px;">
 
     <button onclick="addTransaction()">Add Transaction</button>
