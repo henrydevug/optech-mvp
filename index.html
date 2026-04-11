@@ -26,16 +26,33 @@
 
 <!-- DASHBOARD -->
 <section id="dashboard" class="page active">
-  <h1>Dashboard</h1>
+  <h1>Financial Overview</h1>
+  <p style="opacity:0.7; margin-top:6px;">
+    Real-time snapshot of your business performance
+  </p>
 
   <div class="grid">
-    <div class="card">💰 Balance<br><strong>UGX 0</strong></div>
-    <div class="card">📥 Income<br><strong>UGX 0</strong></div>
-    <div class="card">📤 Expenses<br><strong>UGX 0</strong></div>
-    <div class="card">📊 Transactions<br><strong>0</strong></div>
+    <div class="card">
+      💰 Balance
+      <strong id="balanceCard">UGX 0</strong>
+    </div>
+
+    <div class="card">
+      📥 Income
+      <strong id="incomeCard">UGX 0</strong>
+    </div>
+
+    <div class="card">
+      📤 Expenses
+      <strong id="expenseCard">UGX 0</strong>
+    </div>
+
+    <div class="card">
+      📊 Transactions
+      <strong id="countCard">0</strong>
+    </div>
   </div>
 </section>
-
 <!-- TRANSACTIONS -->
 <section id="transactions" class="page">
   <h1>Transactions</h1>
