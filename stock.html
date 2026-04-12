@@ -125,6 +125,35 @@ function loadStock(){
 
 loadStock();
 </script>
+<div class="bottom-nav">
+    <a href="dashboard.html">📊 Home</a>
+    <a href="stock.html">📦 Stock</a>
+    <a href="sales.html">🛒 Sales</a>
+    <a href="reports.html">📑 Reports</a>
+</div>
 
+<style>
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:white;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    box-shadow:0 -2px 8px rgba(0,0,0,0.08);
+    padding:10px 0;
+}
+.bottom-nav a{
+    text-align:center;
+    text-decoration:none;
+    color:#333;
+    font-size:14px;
+    font-weight:bold;
+}
+body{
+    padding-bottom:80px;
+}
+</style>
 </body>
 </html>
