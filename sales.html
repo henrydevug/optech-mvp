@@ -1,159 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Op-tech Sales</title>
-
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-
-    .card {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-
-    button {
-      padding: 10px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-
-    .nav {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Record Sale - Op-tech</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f6fa;
+    margin:0;
+    padding:15px;
+}
+.header{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+.card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+label{
+    font-weight:bold;
+    display:block;
+    margin-top:15px;
+}
+input, select{
+    width:100%;
+    padding:14px;
+    margin-top:8px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    font-size:16px;
+    box-sizing:border-box;
+}
+button{
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+    background:#27ae60;
+    color:white;
+    cursor:pointer;
+}
+.sales-list{
+    margin-top:20px;
+}
+.sale-item{
+    background:white;
+    padding:15px;
+    margin-top:10px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+</style>
 </head>
-
 <body>
 
-<!-- NAVIGATION -->
-<div class="nav">
-  <button onclick="goBack()">⬅ Back</button>
-  <button onclick="loadTotals()">🔄 Refresh</button>
-</div>
+<div class="header">🛒 Record Sale</div>
 
-<!-- SALES INPUT -->
 <div class="card">
-  <h2>Make Sale</h2>
+    <label>Select Item</label>
+    <select id="productName">
+        <option value="">Choose item</option>
+    </select>
 
-  <input id="itemName" placeholder="Item Name" type="text"><br><br>
-  <input id="saleQty" placeholder="Quantity" type="number"><br><br>
-  <input id="salePrice" placeholder="Selling Price" type="number"><br>
+    <label>Quantity Sold</label>
+    <input type="number" id="qty" placeholder="Enter quantity sold">
 
-  <button onclick="addSale()">💰 Add Sale</button>
+    <label>Selling Price</label>
+    <input type="number" id="price" placeholder="Enter selling price">
+
+    <button onclick="saveSale()">💰 Save Sale</button>
 </div>
 
-<!-- DASHBOARD -->
-<div class="card">
-  <h3 id="todaySales">Sales: UGX 0</h3>
-  <h3 id="todayProfit">Profit: UGX 0</h3>
-</div>
-
-<!-- RECEIPT -->
-<div id="receiptBox" class="card"></div>
+<div class="sales-list" id="salesList"></div>
 
 <script>
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
 let sales = JSON.parse(localStorage.getItem("sales")) || [];
 
-// =====================
-// 💰 ADD SALE
-// =====================
-function addSale() {
-  const itemName = document.getElementById("itemName").value.trim();
-  const qty = Number(document.getElementById("saleQty").value);
-  const price = Number(document.getElementById("salePrice").value);
+function loadProducts(){
+    const dropdown = document.getElementById("productName");
+    dropdown.innerHTML = '<option value="">Choose item</option>';
 
-  if (!itemName || !qty || !price) {
-    return alert("Fill all fields");
-  }
-
-  const total = qty * price;
-
-  // simple profit estimate (you can upgrade later with buying price)
-  const profit = total * 0.2;
-
-  const receipt = {
-    product: itemName,
-    quantity: qty,
-    sellingPrice: price,
-    total,
-    profit,
-    date: new Date().toLocaleDateString()
-  };
-
-  sales.push(receipt);
-
-  localStorage.setItem("sales", JSON.stringify(sales));
-  localStorage.setItem("lastReceipt", JSON.stringify(receipt));
-
-  document.getElementById("itemName").value = "";
-  document.getElementById("saleQty").value = "";
-  document.getElementById("salePrice").value = "";
-
-  loadTotals();
-  loadReceipt();
+    stock.forEach(item=>{
+        dropdown.innerHTML += `
+            <option value="${item.name}">
+                ${item.name} (${item.quantity} left)
+            </option>
+        `;
+    });
 }
 
-// =====================
-// 📊 TOTALS
-// =====================
-function loadTotals() {
-  const sales = JSON.parse(localStorage.getItem("sales")) || [];
-  const today = new Date().toLocaleDateString();
+function saveSale(){
+    const productName = document.getElementById("productName").value;
+    const qty = parseInt(document.getElementById("qty").value);
+    const price = parseInt(document.getElementById("price").value);
 
-  let totalSales = 0;
-  let totalProfit = 0;
-
-  sales.forEach(s => {
-    if (s.date === today) {
-      totalSales += s.total;
-      totalProfit += s.profit;
+    if(!productName || !qty || !price){
+        alert("Please fill all fields");
+        return;
     }
-  });
 
-  document.getElementById("todaySales").innerText =
-    `Sales: UGX ${totalSales}`;
+    let item = stock.find(i => i.name === productName);
 
-  document.getElementById("todayProfit").innerText =
-    `Profit: UGX ${totalProfit}`;
+    if(!item){
+        alert("Item not found");
+        return;
+    }
+
+    if(item.quantity < qty){
+        alert("Not enough stock");
+        return;
+    }
+
+    const total = qty * price;
+    const profit = (price - item.buyingPrice) * qty;
+
+    item.quantity -= qty;
+
+    sales.push({
+        product:productName,
+        quantity:qty,
+        sellingPrice:price,
+        total:total,
+        profit:profit,
+        date:new Date().toLocaleDateString()
+    });
+
+    localStorage.setItem("stock", JSON.stringify(stock));
+    localStorage.setItem("sales", JSON.stringify(sales));
+
+    document.getElementById("qty").value = "";
+    document.getElementById("price").value = "";
+
+    loadProducts();
+    loadSales();
+    alert("Sale saved successfully");
 }
 
-// =====================
-// 🧾 RECEIPT
-// =====================
-function loadReceipt() {
-  const receipt = JSON.parse(localStorage.getItem("lastReceipt"));
-  if (!receipt) return;
+function loadSales(){
+    const salesList = document.getElementById("salesList");
+    salesList.innerHTML = "";
 
-  document.getElementById("receiptBox").innerHTML = `
-    <h3>Last Receipt</h3>
-    <p><b>Item:</b> ${receipt.product}</p>
-    <p><b>Qty:</b> ${receipt.quantity}</p>
-    <p><b>Price:</b> UGX ${receipt.sellingPrice}</p>
-    <p><b>Total:</b> UGX ${receipt.total}</p>
-    <p><b>Profit:</b> UGX ${receipt.profit}</p>
-    <p><b>Date:</b> ${receipt.date}</p>
-  `;
+    sales.slice().reverse().forEach(sale=>{
+        salesList.innerHTML += `
+            <div class="sale-item">
+                <strong>${sale.product}</strong><br>
+                Qty: ${sale.quantity}<br>
+                Total: UGX ${sale.total}<br>
+                Profit: UGX ${sale.profit}
+            </div>
+        `;
+    });
 }
 
-// =====================
-// ⬅ BACK BUTTON
-// =====================
-function goBack() {
-  window.history.back();
-}
-
-// INIT
-loadTotals();
-loadReceipt();
+loadProducts();
+loadSales();
 </script>
 
 </body>
