@@ -1,228 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Op-tech Mobile App</title>
-
+<title>Reports - Op-tech</title>
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #f4f6f9;
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f6fa;
+    margin:0;
+    padding:15px;
 }
-
-/* 📄 PAGE SYSTEM */
-.page {
-  display: none;
-  padding: 15px;
-  padding-bottom: 80px;
+.header{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:20px;
 }
-
-.active {
-  display: block;
+.card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom:15px;
 }
-
-/* 🧾 CARDS */
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+input, button{
+    width:100%;
+    padding:14px;
+    margin-top:10px;
+    border-radius:10px;
+    font-size:16px;
+    box-sizing:border-box;
 }
-
-/* ✍️ INPUTS */
-input {
-  width: 100%;
-  padding: 12px;
-  margin: 6px 0;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  font-size: 16px;
+input{
+    border:1px solid #ccc;
 }
-
-/* 🔘 BUTTONS */
-button {
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  margin-top: 5px;
+button{
+    border:none;
+    background:#3498db;
+    color:white;
+    font-weight:bold;
 }
-
-.primary {
-  background: #1e88e5;
-  color: white;
-  width: 100%;
-}
-
-/* 🧭 NAV */
-.nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  background: white;
-  border-top: 1px solid #ddd;
-}
-
-.nav button {
-  flex: 1;
-  background: none;
+.sale-item{
+    padding:12px 0;
+    border-bottom:1px solid #eee;
 }
 </style>
 </head>
-
 <body>
 
-<!-- 📊 PAGE 1: DASHBOARD -->
-<div class="page active" id="page1">
-  <h2>Dashboard</h2>
+<div class="header">📑 Reports</div>
 
-  <div class="card">
-    <div id="todaySales">Sales: 0</div>
-    <div id="todayProfit">Profit: 0</div>
-  </div>
+<div class="card">
+    <label>Select Date</label>
+    <input type="date" id="reportDate">
+    <button onclick="filterReports()">🔍 Filter</button>
 </div>
 
-<!-- 💰 PAGE 2: SALE -->
-<div class="page" id="page2">
-  <h2>New Sale</h2>
-
-  <div class="card">
-    <input id="productName" placeholder="Product name">
-    <input id="saleQty" type="number" placeholder="Quantity">
-    <input id="salePrice" type="number" placeholder="Selling price">
-    <button class="primary" onclick="addSale()">Sell Item</button>
-  </div>
+<div class="card">
+    <div>💰 Total Sales: <strong id="totalSales">UGX 0</strong></div>
+    <div>📈 Total Profit: <strong id="totalProfit">UGX 0</strong></div>
+    <div>🏆 Best Seller: <strong id="bestSeller">None</strong></div>
 </div>
 
-<!-- 🧾 PAGE 3: RECEIPT -->
-<div class="page" id="page3">
-  <h2>Receipt</h2>
-
-  <div class="card">
-    <div id="receiptBox"></div>
-  </div>
+<div class="card">
+    <h3>🧾 Sales History</h3>
+    <div id="salesHistory"></div>
 </div>
 
-<!-- 🧠 SCRIPT -->
 <script>
-let currentPage = 1;
-
-let stock = JSON.parse(localStorage.getItem("stock")) || [];
 let sales = JSON.parse(localStorage.getItem("sales")) || [];
 
-function showPage(page) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById("page" + page).classList.add("active");
-  currentPage = page;
-}
+function filterReports(){
+    const selectedDate = document.getElementById("reportDate").value;
+    const history = document.getElementById("salesHistory");
 
-/* 🔜 NEXT */
-function nextPage() {
-  if (currentPage < 3) showPage(currentPage + 1);
-}
+    history.innerHTML = "";
 
-/* 🔙 BACK */
-function prevPage() {
-  if (currentPage > 1) showPage(currentPage - 1);
-}
+    let filtered = sales;
 
-function addSale() {
-  let productName = document.getElementById("productName").value.trim();
-  let qty = Number(document.getElementById("saleQty").value);
-  let price = Number(document.getElementById("salePrice").value);
-
-  if (!productName || !qty || !price) {
-    alert("Fill all fields");
-    return;
-  }
-
-  let item = stock.find(i => i.name === productName);
-
-  if (!item) {
-    alert("Item not found");
-    return;
-  }
-
-  if (item.quantity < qty) {
-    alert("Not enough stock");
-    return;
-  }
-
-  let total = qty * price;
-  let profit = (price - item.buyingPrice) * qty;
-
-  item.quantity -= qty;
-
-  let receipt = {
-    product: productName,
-    quantity: qty,
-    sellingPrice: price,
-    total,
-    profit,
-    date: new Date().toLocaleDateString()
-  };
-
-  sales.push(receipt);
-
-  localStorage.setItem("stock", JSON.stringify(stock));
-  localStorage.setItem("sales", JSON.stringify(sales));
-  localStorage.setItem("lastReceipt", JSON.stringify(receipt));
-
-  document.getElementById("saleQty").value = "";
-  document.getElementById("salePrice").value = "";
-
-  loadTotals();
-  loadReceipt();
-
-  showPage(3); // 👉 auto go to receipt page
-}
-
-function loadTotals() {
-  let sales = JSON.parse(localStorage.getItem("sales")) || [];
-  let today = new Date().toLocaleDateString();
-
-  let totalSales = 0;
-  let totalProfit = 0;
-
-  sales.forEach(s => {
-    if (s.date === today) {
-      totalSales += s.total;
-      totalProfit += s.profit;
+    if(selectedDate){
+        const formatted = new Date(selectedDate).toLocaleDateString();
+        filtered = sales.filter(s => s.date === formatted);
     }
-  });
 
-  document.getElementById("todaySales").innerText = "Sales: " + totalSales;
-  document.getElementById("todayProfit").innerText = "Profit: " + totalProfit;
+    let totalSales = filtered.reduce((sum,s)=>sum+s.total,0);
+    let totalProfit = filtered.reduce((sum,s)=>sum+s.profit,0);
+
+    document.getElementById("totalSales").textContent = "UGX " + totalSales;
+    document.getElementById("totalProfit").textContent = "UGX " + totalProfit;
+
+    let itemCount = {};
+    filtered.forEach(s=>{
+        itemCount[s.product] = (itemCount[s.product] || 0) + s.quantity;
+    });
+
+    let bestSeller = "None";
+    let max = 0;
+
+    for(let item in itemCount){
+        if(itemCount[item] > max){
+            max = itemCount[item];
+            bestSeller = item;
+        }
+    }
+
+    document.getElementById("bestSeller").textContent = bestSeller;
+
+    if(filtered.length === 0){
+        history.innerHTML = "<p>No sales found</p>";
+        return;
+    }
+
+    filtered.slice().reverse().forEach(sale=>{
+        history.innerHTML += `
+            <div class="sale-item">
+                <strong>${sale.product}</strong><br>
+                Qty: ${sale.quantity}<br>
+                Total: UGX ${sale.total}<br>
+                Profit: UGX ${sale.profit}
+            </div>
+        `;
+    });
 }
 
-function loadReceipt() {
-  let receipt = JSON.parse(localStorage.getItem("lastReceipt"));
-  if (!receipt) return;
-
-  document.getElementById("receiptBox").innerHTML = `
-    <b>${receipt.product}</b><br>
-    Qty: ${receipt.quantity}<br>
-    Price: UGX ${receipt.sellingPrice}<br>
-    Total: UGX ${receipt.total}<br>
-    Profit: UGX ${receipt.profit}<br>
-    Date: ${receipt.date}
-  `;
-}
-
-loadTotals();
-loadReceipt();
+filterReports();
 </script>
-
-<!-- 🧭 NAVIGATION BUTTONS -->
-<div class="nav">
-  <button onclick="prevPage()">⬅ Back</button>
-  <button onclick="showPage(1)">🏠 Home</button>
-  <button onclick="nextPage()">Next ➡</button>
-</div>
 
 </body>
 </html>
