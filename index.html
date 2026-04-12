@@ -1,60 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Op-tech Dashboard</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
-    nav {
-      background: #1e8e3e;
-      padding: 15px;
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-    }
-    nav a { color: white; text-decoration: none; font-weight: bold; }
-    .container { padding: 20px; }
-    .card {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Op-tech Dashboard</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f6fa;
+    margin:0;
+    padding:15px;
+}
+.header{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+.grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:15px;
+}
+.card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+.amount{
+    font-size:28px;
+    font-weight:bold;
+    margin-top:10px;
+}
+.actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+button{
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.stock-btn{
+    background:#3498db;
+    color:white;
+}
+.sale-btn{
+    background:#27ae60;
+    color:white;
+}
+.alert-item{
+    padding:10px 0;
+    border-bottom:1px solid #eee;
+}
+</style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Dashboard</a>
-    <a href="sales.html">Sales</a>
-    <a href="stock.html">Stock</a>
-    <a href="reports.html">Reports</a>
-  </nav>
 
-  <div class="container">
-    <div class="card"><h3>Today's Sales</h3><p id="totalSales">UGX 0</p></div>
-    <div class="card"><h3>Today's Profit</h3><p id="totalProfit">UGX 0</p></div>
-    <div class="card"><h3>Stock Items</h3><p id="totalStock">0 Products</p></div>
+<div class="header">📊 Op-tech Dashboard</div>
+
+<div class="grid">
     <div class="card">
-      <h3>⚠️ Low Stock Alerts</h3>
-      <p id="lowStock">0 Alerts</p>
-      <div id="lowStockList"></div>
+        <div>💰 Today's Sales</div>
+        <div class="amount" id="todaySales">UGX 0</div>
     </div>
-  </div>
 
-  <script>
-    function loadDashboard() {
-      const sales = JSON.parse(localStorage.getItem("sales")) || [];
-      const stock = JSON.parse(localStorage.getItem("stock")) || [];
-      const today = new Date().toLocaleDateString();
+    <div class="card">
+        <div>📈 Today's Profit</div>
+        <div class="amount" id="todayProfit">UGX 0</div>
+    </div>
 
-      let totalSales = 0;
-      let totalProfit = 0;
-      let lowStockItems = [];
+    <div class="card">
+        <div>⚠️ Low Stock Alerts</div>
+        <div class="amount" id="lowStockCount">0 Items</div>
+    </div>
 
-      sales.forEach(sale => {
-        if (sale.date === today) {
-          totalSales += sale.total;
-          totalProfit += sale.profit;
-        }
+    <div class="actions">
+        <button class="stock-btn" onclick="window.location.href='stock.html'">
+            ➕ Add Stock
+        </button>
+        <button class="sale-btn" onclick="window.location.href='sales.html'">
+            🛒 Record Sale
+        </button>
+    </div>
+
+    <div class="card">
+        <h3>⚠️ Low Stock Items</h3>
+        <div id="lowStockList"></div>
+    </div>
+</div>
+
+<script>
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+let sales = JSON.parse(localStorage.getItem("sales")) || [];
+
+function loadDashboard(){
+    const today = new Date().toLocaleDateString();
+
+    let todaySales = sales
+        .filter(s => s.date === today)
+        .reduce((sum, s) => sum + s.total, 0);
+
+    let todayProfit = sales
+        .filter(s => s.date === today)
+        .reduce((sum, s) => sum + s.profit, 0);
+
+    let lowStock = stock.filter(item => item.quantity <= 5);
+
+    document.getElementById("todaySales").textContent = "UGX " + todaySales;
+    document.getElementById("todayProfit").textContent = "UGX " + todayProfit;
+    document.getElementById("lowStockCount").textContent = lowStock.length + " Items";
+
+    const list = document.getElementById("lowStockList");
+    list.innerHTML = "";
+
+    if(lowStock.length === 0){
+        list.innerHTML = "<p>No low stock alerts 🎉</p>";
+    } else {
+        lowStock.forEach(item => {
+            list.innerHTML += `
+                <div class="alert-item">
+                    ${item.name} (${item.quantity} left)
+                </div>
+            `;
+        });
+    }
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>
