@@ -1,65 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stock | Op-tech</title>
-  <style>
-    body { font-family: Arial; margin: 0; background: #f4f4f4; }
-    nav { background: #1e8e3e; padding: 15px; display: flex; justify-content: space-around; flex-wrap: wrap; }
-    nav a { color: white; text-decoration: none; font-weight: bold; }
-    .container { padding: 20px; }
-    .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-    input, button { width: 100%; padding: 10px; margin-top: 10px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Stock - Op-tech</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f6fa;
+    margin:0;
+    padding:15px;
+}
+.header{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+.card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+label{
+    font-weight:bold;
+    display:block;
+    margin-top:15px;
+}
+input{
+    width:100%;
+    padding:14px;
+    margin-top:8px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    font-size:16px;
+    box-sizing:border-box;
+}
+button{
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+    background:#3498db;
+    color:white;
+    cursor:pointer;
+}
+.stock-list{
+    margin-top:20px;
+}
+.stock-item{
+    background:white;
+    padding:15px;
+    margin-top:10px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+</style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Dashboard</a>
-    <a href="sales.html">Sales</a>
-    <a href="stock.html">Stock</a>
-    <a href="reports.html">Reports</a>
-  </nav>
 
-  <div class="container">
-    <div class="card">
-      <h2>📦 Add Stock</h2>
-      <input type="text" id="product" placeholder="Product Name" />
-      <input type="number" id="quantity" placeholder="Quantity" />
-      <input type="number" id="buyingPrice" placeholder="Buying Price" />
-      <button onclick="saveStock()">Save Stock</button>
-    </div>
-    <div class="card">
-      <h3>Current Stock</h3>
-      <div id="stockList"></div>
-    </div>
-  </div>
+<div class="header">➕ Add Stock</div>
 
-  <script>
-    function saveStock() {
-      const stock = JSON.parse(localStorage.getItem("stock")) || [];
-      const product = document.getElementById("product").value.trim();
-      const quantity = parseInt(document.getElementById("quantity").value);
-      const buyingPrice = parseInt(document.getElementById("buyingPrice").value);
+<div class="card">
+    <label>Item Name</label>
+    <input type="text" id="itemName" placeholder="Enter item name">
 
-      if (!product || !quantity || !buyingPrice) return alert("Fill all fields");
+    <label>Buying Price</label>
+    <input type="number" id="buyingPrice" placeholder="Enter buying price">
 
-      stock.push({ product, quantity, buyingPrice });
-      localStorage.setItem("stock", JSON.stringify(stock));
+    <label>Quantity</label>
+    <input type="number" id="quantity" placeholder="Enter quantity">
 
-      document.getElementById("product").value = "";
-      document.getElementById("quantity").value = "";
-      document.getElementById("buyingPrice").value = "";
-      loadStock();
+    <button onclick="saveStock()">💾 Save Stock</button>
+</div>
+
+<div class="stock-list" id="stockList"></div>
+
+<script>
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+
+function saveStock(){
+    const itemName = document.getElementById("itemName").value.trim();
+    const buyingPrice = parseInt(document.getElementById("buyingPrice").value);
+    const quantity = parseInt(document.getElementById("quantity").value);
+
+    if(!itemName || !buyingPrice || !quantity){
+        alert("Please fill all fields");
+        return;
     }
 
-    function loadStock() {
-      const stock = JSON.parse(localStorage.getItem("stock")) || [];
-      document.getElementById("stockList").innerHTML = stock.length
-        ? stock.map(item => `<p>${item.product} - ${item.quantity} units - UGX ${item.buyingPrice}</p>`).join("")
-        : "<p>No stock yet</p>";
-    }
+    stock.push({
+        name:itemName,
+        buyingPrice:buyingPrice,
+        quantity:quantity
+    });
+
+    localStorage.setItem("stock", JSON.stringify(stock));
+
+    document.getElementById("itemName").value = "";
+    document.getElementById("buyingPrice").value = "";
+    document.getElementById("quantity").value = "";
+
     loadStock();
-  </script>
+    alert("Stock saved successfully");
+}
+
+function loadStock(){
+    const stockList = document.getElementById("stockList");
+    stockList.innerHTML = "";
+
+    stock.forEach(item=>{
+        stockList.innerHTML += `
+            <div class="stock-item">
+                <strong>${item.name}</strong><br>
+                Buying: UGX ${item.buyingPrice}<br>
+                Qty: ${item.quantity}
+            </div>
+        `;
+    });
+}
+
+loadStock();
+</script>
+
 </body>
 </html>
